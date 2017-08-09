@@ -27,26 +27,26 @@ struct Particle {
 class ParticleFilter {
 
     // Number of particles to draw
-    int num_particles;
+    unsigned long num_particles{1000};
 
 
     // Flag, if filter is initialized
-    bool is_initialized;
+    bool is_initialized{false};
 
     // Vector of weights of all particles
-    std::vector<double> weights;
+    std::vector<double> weights{std::vector<double>(num_particles)};
 
 public:
 
     // Set of current particles
-    std::vector<Particle> particles;
+    std::vector<Particle> particles{std::vector<Particle>(num_particles)};
 
     // Constructor
     // @param M Number of particles
-    ParticleFilter() : num_particles(0), is_initialized(false) {}
+    ParticleFilter() = default;
 
     // Destructor
-    ~ParticleFilter() {}
+    ~ParticleFilter() = default;
 
     /**
      * init Initializes particle filter by initializing particles to Gaussian
@@ -57,7 +57,7 @@ public:
      * @param std[] Array of dimension 3 [standard deviation of x [m], standard deviation of y [m]
      *   standard deviation of yaw [rad]]
      */
-    void init(double x, double y, double theta, double std[]);
+    void init(double x, double y, double theta, const double std[]);
 
     /**
      * prediction Predicts the state for the next time step
