@@ -10,6 +10,7 @@
 #define PARTICLE_FILTER_H_
 
 #include "helper_functions.h"
+#include <random>
 
 struct Particle {
 
@@ -35,6 +36,9 @@ class ParticleFilter {
 
     // Vector of weights of all particles
     std::vector<double> weights{std::vector<double>(num_particles)};
+
+    // random engine for re-use
+    std::default_random_engine gen;
 
 public:
 
