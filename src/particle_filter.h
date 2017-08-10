@@ -31,7 +31,7 @@ inline double dist(Particle &p1, LandmarkObs &l2) {
 class ParticleFilter {
 
     // Number of particles to draw
-    unsigned long num_particles{10};
+    unsigned long num_particles{100};
 
     // Flag, if filter is initialized
     bool is_initialized{false};
