@@ -10,9 +10,8 @@
 
 #include <sstream>
 #include <fstream>
-#include <math.h>
+#include <cmath>
 #include <vector>
-#include "map.h"
 
 /*
  * Struct representing one position/control measurement.
@@ -43,6 +42,13 @@ struct LandmarkObs {
     double y;            // Local (vehicle coordinates) y position of landmark observation [m]
 };
 
+class Map {
+public:
+
+    std::vector<LandmarkObs> landmark_list; // List of landmarks in the map
+
+};
+
 /*
  * Computes the Euclidean distance between two 2D points.
  * @param (x1,y1) x and y coordinates of first point
@@ -51,6 +57,10 @@ struct LandmarkObs {
  */
 inline double dist(double x1, double y1, double x2, double y2) {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+}
+
+inline double dist(LandmarkObs &l1, LandmarkObs &l2) {
+    return dist(l1.x, l1.y, l2.x, l2.y);
 }
 
 inline double *getError(double gt_x, double gt_y, double gt_theta, double pf_x, double pf_y, double pf_theta) {
@@ -87,7 +97,7 @@ inline bool read_map_data(std::string filename, Map &map) {
         std::istringstream iss_map(line_map);
 
         // Declare landmark values and ID:
-        float landmark_x_f, landmark_y_f;
+        double landmark_x_f, landmark_y_f;
         int id_i;
 
         // Read data from current line to values::
@@ -95,16 +105,8 @@ inline bool read_map_data(std::string filename, Map &map) {
         iss_map >> landmark_y_f;
         iss_map >> id_i;
 
-        // Declare single_landmark:
-        Map::single_landmark_s single_landmark_temp;
-
-        // Set values
-        single_landmark_temp.id_i = id_i;
-        single_landmark_temp.x_f = landmark_x_f;
-        single_landmark_temp.y_f = landmark_y_f;
-
         // Add to landmark list of map:
-        map.landmark_list.push_back(single_landmark_temp);
+        map.landmark_list.push_back(LandmarkObs{id_i, landmark_x_f, landmark_y_f});
     }
     return true;
 }

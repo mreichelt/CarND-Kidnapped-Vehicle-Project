@@ -24,18 +24,17 @@ struct Particle {
     std::vector<double> sense_y;
 };
 
+inline double dist(Particle &p1, LandmarkObs &l2) {
+    return dist(p1.x, p1.y, l2.x, l2.y);
+}
 
 class ParticleFilter {
 
     // Number of particles to draw
-    unsigned long num_particles{1000};
-
+    unsigned long num_particles{10};
 
     // Flag, if filter is initialized
     bool is_initialized{false};
-
-    // Vector of weights of all particles
-    std::vector<double> weights{std::vector<double>(num_particles)};
 
     // random engine for re-use
     std::default_random_engine gen;
@@ -43,7 +42,7 @@ class ParticleFilter {
 public:
 
     // Set of current particles
-    std::vector<Particle> particles{std::vector<Particle>(num_particles)};
+    std::vector<Particle> particles;
 
     // Constructor
     // @param M Number of particles
@@ -77,10 +76,10 @@ public:
     /**
      * dataAssociation Finds which observations correspond to which landmarks (likely by using
      *   a nearest-neighbors data association).
-     * @param predicted Vector of predicted landmark observations
+     * @param predictedVec Vector of predicted landmark observations
      * @param observations Vector of landmark observations
      */
-    void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs> &observations);
+    void dataAssociation(std::vector<LandmarkObs> predictedVec, std::vector<LandmarkObs> &observations);
 
     /**
      * updateWeights Updates the weights for each particle based on the likelihood of the
@@ -119,6 +118,15 @@ public:
     const bool initialized() const {
         return is_initialized;
     }
+
+    std::vector<LandmarkObs> findLandmarksInSensorRange(double sensor_range, Particle &particle, Map &map);
+
+    std::vector<LandmarkObs> transformToParticlePosition(const std::vector<LandmarkObs> &landmarks, Particle &particle);
+
+    double calcParticleWeight(Particle &particle, std::vector<LandmarkObs> &predictedVec,
+                              std::vector<LandmarkObs> &observations, const double std_landmark[]);
+
+    LandmarkObs findLandmarkById(std::vector<LandmarkObs> &landmarks, int id);
 };
 
 
