@@ -41,13 +41,13 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
             norm_theta(0, std_pos[2]);
 
     for (auto &particle : particles) {
-        // avoid division by zero
-        if (fabs(yaw_rate) > 0.000001) {
-            particle.x += velocity / yaw_rate * (sin(particle.theta + yaw_rate * delta_t) - sin(particle.theta));
-            particle.y += velocity / yaw_rate * (cos(particle.theta) - cos(particle.theta + yaw_rate * delta_t));
-        } else {
+        if (fabs(yaw_rate) < 0.000001) {
+            // avoid division by zero
             particle.x += velocity * delta_t * cos(particle.theta);
             particle.y += velocity * delta_t * sin(particle.theta);
+        } else {
+            particle.x += velocity / yaw_rate * (sin(particle.theta + yaw_rate * delta_t) - sin(particle.theta));
+            particle.y += velocity / yaw_rate * (cos(particle.theta) - cos(particle.theta + yaw_rate * delta_t));
         }
         particle.theta += yaw_rate * delta_t;
 
