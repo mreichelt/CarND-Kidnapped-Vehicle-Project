@@ -96,7 +96,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
     //   http://planning.cs.uiuc.edu/node99.html
 
     for (auto &particle : particles) {
-        vector<LandmarkObs> predictedVec = findLandmarksInSensorRangeAndTransform(sensor_range, particle, map_landmarks);
+        vector<LandmarkObs> predictedVec = findLandmarksInSensorRangeAndTransform(sensor_range, particle,
+                                                                                  map_landmarks);
         dataAssociation(predictedVec, observations);
         particle.weight = calcParticleWeight(particle, predictedVec, observations, std_landmark);
     }
@@ -137,15 +138,14 @@ double ParticleFilter::calcParticleWeight(Particle &particle, vector<LandmarkObs
     return weight;
 }
 
-double getWeight(Particle &particle) { return particle.weight; }
-
 void ParticleFilter::resample() {
     vector<Particle> resampled;
 
     // get weights from particles
     vector<double> weights;
-    weights.resize(particles.size());
-    transform(particles.begin(), particles.end(), weights.begin(), getWeight);
+    for (auto &particle : particles) {
+        weights.push_back(particle.weight);
+    }
 
     // do the actual resampling: roll the dice for num_particles times to get the exact amount of particles again
     discrete_distribution<int> distribution(weights.begin(), weights.end());
