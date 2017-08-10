@@ -114,17 +114,17 @@ vector<LandmarkObs> ParticleFilter::findLandmarksInSensorRange(double sensor_ran
 }
 
 vector<LandmarkObs>
-ParticleFilter::transformToParticlePosition(const vector<LandmarkObs> &landmarks, Particle &particle) {
-    vector<LandmarkObs> transformedLandmarks;
-    for (auto &landmark : landmarks) {
+ParticleFilter::transformToParticlePosition(const vector<LandmarkObs> &observations, Particle &particle) {
+    vector<LandmarkObs> transformedObservations;
+    for (auto &observation : observations) {
         LandmarkObs transformed = {
-                landmark.id, // original id
-                landmark.x + cos(particle.theta) * particle.x + sin(particle.theta) * particle.y, // transformed x
-                landmark.y - sin(particle.theta) * particle.x + cos(particle.theta) * particle.y, // transformed y
+                observation.id, // original id
+                particle.x + cos(particle.theta) * observation.x + sin(particle.theta) * observation.y, // transformed x
+                particle.y - sin(particle.theta) * observation.x + cos(particle.theta) * observation.y, // transformed y
         };
-        transformedLandmarks.push_back(transformed);
+        transformedObservations.push_back(transformed);
     }
-    return transformedLandmarks;
+    return transformedObservations;
 }
 
 double ParticleFilter::calcParticleWeight(Particle &particle, vector<LandmarkObs> &predictedVec,

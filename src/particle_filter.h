@@ -121,7 +121,7 @@ public:
 
     std::vector<LandmarkObs> findLandmarksInSensorRange(double sensor_range, Particle &particle, Map &map);
 
-    std::vector<LandmarkObs> transformToParticlePosition(const std::vector<LandmarkObs> &landmarks, Particle &particle);
+    std::vector<LandmarkObs> transformToParticlePosition(const std::vector<LandmarkObs> &observations, Particle &particle);
 
     double calcParticleWeight(Particle &particle, std::vector<LandmarkObs> &predictedVec,
                               std::vector<LandmarkObs> &observations, const double std_landmark[]);
