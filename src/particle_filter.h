@@ -31,7 +31,7 @@ inline double dist(Particle &p1, LandmarkObs &l2) {
 class ParticleFilter {
 
     // Number of particles to draw
-    unsigned long num_particles{100};
+    unsigned long num_particles{10};
 
     // Flag, if filter is initialized
     bool is_initialized{false};
@@ -119,9 +119,7 @@ public:
         return is_initialized;
     }
 
-    std::vector<LandmarkObs> findLandmarksInSensorRange(double sensor_range, Particle &particle, Map &map);
-
-    std::vector<LandmarkObs> transformToParticlePosition(const std::vector<LandmarkObs> &observations, Particle &particle);
+    std::vector<LandmarkObs> findLandmarksInSensorRangeAndTransform(double sensor_range, Particle &particle, Map &map);
 
     double calcParticleWeight(Particle &particle, std::vector<LandmarkObs> &predictedVec,
                               std::vector<LandmarkObs> &observations, const double std_landmark[]);

@@ -96,35 +96,27 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
     //   http://planning.cs.uiuc.edu/node99.html
 
     for (auto &particle : particles) {
-        vector<LandmarkObs> predictedVec = findLandmarksInSensorRange(sensor_range, particle, map_landmarks);
-        vector<LandmarkObs> transformedObservations = transformToParticlePosition(observations, particle);
-        dataAssociation(predictedVec, transformedObservations);
-        particle.weight = calcParticleWeight(particle, predictedVec, transformedObservations, std_landmark);
+        vector<LandmarkObs> predictedVec = findLandmarksInSensorRangeAndTransform(sensor_range, particle, map_landmarks);
+        dataAssociation(predictedVec, observations);
+        particle.weight = calcParticleWeight(particle, predictedVec, observations, std_landmark);
     }
-}
-
-vector<LandmarkObs> ParticleFilter::findLandmarksInSensorRange(double sensor_range, Particle &particle, Map &map) {
-    vector<LandmarkObs> landmarksInSensorRange;
-    for (auto &landmark : map.landmark_list) {
-        if (dist(particle, landmark) < sensor_range) {
-            landmarksInSensorRange.push_back(landmark);
-        }
-    }
-    return landmarksInSensorRange;
 }
 
 vector<LandmarkObs>
-ParticleFilter::transformToParticlePosition(const vector<LandmarkObs> &observations, Particle &particle) {
-    vector<LandmarkObs> transformedObservations;
-    for (auto &observation : observations) {
-        LandmarkObs transformed = {
-                observation.id, // original id
-                particle.x + cos(particle.theta) * observation.x + sin(particle.theta) * observation.y, // transformed x
-                particle.y - sin(particle.theta) * observation.x + cos(particle.theta) * observation.y, // transformed y
-        };
-        transformedObservations.push_back(transformed);
+ParticleFilter::findLandmarksInSensorRangeAndTransform(double sensor_range, Particle &particle, Map &map) {
+    vector<LandmarkObs> landmarksInSensorRange;
+    for (auto &landmark : map.landmark_list) {
+        if (dist(particle, landmark) < sensor_range) {
+            double
+                    delta_x = landmark.x - particle.x,
+                    delta_y = landmark.y - particle.y,
+                    theta = particle.theta,
+                    x = cos(theta) * delta_x + sin(theta) * delta_y,
+                    y = -sin(theta) * delta_x + cos(theta) * delta_y;
+            landmarksInSensorRange.push_back(LandmarkObs{landmark.id, x, y});
+        }
     }
-    return transformedObservations;
+    return landmarksInSensorRange;
 }
 
 double ParticleFilter::calcParticleWeight(Particle &particle, vector<LandmarkObs> &predictedVec,
