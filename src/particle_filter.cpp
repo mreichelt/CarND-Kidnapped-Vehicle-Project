@@ -6,7 +6,12 @@
  */
 
 #include <random>
+#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <cmath>
 #include <sstream>
+#include <string>
 
 #include "particle_filter.h"
 
